@@ -10,17 +10,8 @@ data:
   DOCKER_VERNEMQ_LISTENER__SSL__CERTFILE: "/opt/ssl/server.crt"
   DOCKER_VERNEMQ_LISTENER__SSL__KEYFILE: "/opt/ssl/server.key"
   DOCKER_VERNEMQ_LISTENER__SSL__DEFAULT: "0.0.0.0:8883"
-  DOCKER_VERNEMQ_ALLOW_ANONYMOUS: "off"
-  DOCKER_VERNEMQ_PLUGINS__VMQ_DIVERSITY: "on"
-  DOCKER_VERNEMQ_PLUGINS__VMQ_PASSWD: "off"
-  DOCKER_VERNEMQ_PLUGINS__VMQ_ACL: "off"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__AUTH_POSTGRES__ENABLED: "on"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__POSTGRES__HOST: "postgres-svc"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__POSTGRES__PORT: "5432"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__POSTGRES__USER: "vernemq"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__POSTGRES__PASSWORD: "postgres!"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__POSTGRES__DATABASE: "vernemq_db"
-  DOCKER_VERNEMQ_VMQ_DIVERSITY__POSTGRES__PASSWORD_HASH_METHOD: "crypt"
+  DOCKER_VERNEMQ_PLUGINS__VMQ_DIVERSITY: "off"
+  DOCKER_VERNEMQ_VMQ_DIVERSITY__AUTH_POSTGRES__ENABLED: "off"
   DOCKER_VERNEMQ_DISCOVERY_KUBERNETES: "1"
   DOCKER_VERNEMQ_ERLANG__DISTRIBUTION__PORT_RANGE__MINIMUM: "9100"
   DOCKER_VERNEMQ_ERLANG__DISTRIBUTION__PORT_RANGE__MAXIMUM: "9109"
@@ -41,6 +32,8 @@ spec:
     metadata:
       labels:
         app: vernemq
+      annotations:
+        lastChanged: "2019-10-08 10:37"  
     spec:
       containers:
       - name: vernemq
@@ -71,10 +64,17 @@ spec:
         - mountPath: /opt/ssl
           name: vernemq-certifications
           readOnly: true
+        - mountPath: /etc/vernemq/vmq.passwd
+          subPath: vmq.passwd
+          name: vernemq-passwd
+          readOnly: true
       volumes:
       - name: vernemq-certifications
         secret:
           secretName: vernemq-certifications
+      - name: vernemq-passwd
+        secret:
+          secretName: vernemq-passwd
 ---
 apiVersion: v1
 kind: Service
